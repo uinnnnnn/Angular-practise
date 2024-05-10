@@ -1,0 +1,9 @@
+<button (click)="dealCards()">發牌</button>
+
+<div *ngFor="let deck of decks">
+    <div class="deck">
+        <div *ngFor="let card of deck" class="card">
+            {{ card.rank }} {{ card.suit }}
+        </div>
+    </div>
+</div>

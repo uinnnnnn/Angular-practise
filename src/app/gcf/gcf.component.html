@@ -1,0 +1,16 @@
+<form (ngSubmit)="calculateGCF()">
+    <div>
+        <label for="num1">數字1:</label>
+        <input type="number" id="num1" name="num1" [(ngModel)]="num1" required>
+    </div>
+    <div>
+        <label for="num2">數字2:</label>
+        <input type="number" id="num2" name="num2" [(ngModel)]="num2" required>
+    </div>
+    <button type="submit">計算</button>
+</form>
+
+<div *ngIf="result !== undefined" class="result">
+    <h3>{{ num1 }} 和 {{ num2 }} 的最大公因數是 </h3>
+    <h2>{{ result }}</h2>
+</div>
