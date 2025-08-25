@@ -8,33 +8,33 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: 檢出代碼
-      uses: actions/checkout@v4
-    
-    - name: 設置 Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-    
-    - name: 安裝依賴
-      run: npm ci
-    
-    # 可選：執行 lint 檢查
-    # - name: 執行 Lint
-    #   run: npm run lint
-    
-    # 可選：執行測試  
-    # - name: 執行測試
-    #   run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadless
-    
-    - name: 建置 Angular 應用
-      run: npm run build -- --configuration production --base-href /angular-practise/
-    
-    - name: 部署到 GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist/angular
+      - name: 檢出代碼
+        uses: actions/checkout@v4
+
+      - name: 設置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: 安裝依賴
+        run: npm ci
+
+      # 可選：執行 lint 檢查
+      # - name: 執行 Lint
+      #   run: npm run lint
+
+      # 可選：執行測試
+      # - name: 執行測試
+      #   run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadless
+
+      - name: 建置 Angular 應用
+        run: npm run build -- --configuration production --base-href /Angular-practise/
+
+      - name: 部署到 GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist/angular
