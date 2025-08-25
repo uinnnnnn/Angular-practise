@@ -31,7 +31,7 @@ jobs:
       #   run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadless
 
       - name: 建置 Angular 應用
-        run: npm run build -- --configuration production --base-href /Angular-practise/
+        run: npm run build -- --configuration production --base-href /Angular-practice/
 
       - name: 部署到 GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
