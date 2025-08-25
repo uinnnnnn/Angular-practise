@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 
 // angular material import
@@ -9,16 +9,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
 // component
-import { HeaderComponent } from './header/header.component';
-import { PokerComponent } from './poker/poker.component';
+// import { HeaderComponent } from './header/header.component';
+// import { PokerComponent } from './poker/poker.component';
+// import { GcfComponent } from "./gcf/gcf.component";
+// import { MemberComponent } from "./member/member.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet,RouterLink, ButtonModule, MatToolbarModule,
+  imports: [RouterOutlet, ButtonModule, MatToolbarModule,
     MatMenuModule,
     MatIconModule,
-    MatButtonModule, HeaderComponent,PokerComponent],
+    MatButtonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
