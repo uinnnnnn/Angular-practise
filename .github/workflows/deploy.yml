@@ -1,40 +1,53 @@
-# .github/workflows/deploy.yml
-name: 部署 Angular 練習專案
+# 最簡化的除錯版本
+name: 除錯部署
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: 檢出代碼
-        uses: actions/checkout@v4
-
-      - name: 設置 Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18"
-          cache: "npm"
-
-      - name: 安裝依賴
-        run: npm ci
-
-      # 可選：執行 lint 檢查
-      # - name: 執行 Lint
-      #   run: npm run lint
-
-      # 可選：執行測試
-      # - name: 執行測試
-      #   run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadless
-
-      - name: 建置 Angular 應用
-        run: npm run build -- --configuration production --base-href /Angular-practice/
-
-      - name: 部署到 GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist/angular
+    - name: 檢出代碼
+      uses: actions/checkout@v4
+    
+    - name: 設置 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: 安裝依賴
+      run: npm install
+    
+    - name: 建置（除錯模式）
+      run: |
+        npm run build -- --configuration production --base-href /Angular-practise/ --deploy-url /Angular-practise/
+        ls -la dist/
+        ls -la dist/angular/
+        echo "檢查 index.html 是否存在:"
+        ls -la dist/angular/index.html
+    
+    - name: 創建 404.html
+      run: cp ./dist/angular/index.html ./dist/angular/404.html
+    
+    - name: 設置 GitHub Pages
+      uses: actions/configure-pages@v3
+      
+    - name: 上傳到 GitHub Pages
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: ./dist/angular
+        
+    - name: 部署到 GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
