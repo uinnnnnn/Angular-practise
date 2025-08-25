@@ -1,14 +1,20 @@
-# 最簡化的除錯版本
-name: 除錯部署
+# .github/workflows/deploy.yml
+name: 部署 Angular 練習專案
 
 on:
   push:
-    branches: [ main ]
+    branches: [main, master]
 
+# 給予 GitHub Pages 部署權限
 permissions:
   contents: read
   pages: write
   id-token: write
+
+# 確保只有一個部署任務同時執行
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -16,38 +22,42 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: 檢出代碼
-      uses: actions/checkout@v4
-    
-    - name: 設置 Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-    
-    - name: 安裝依賴
-      run: npm install
-    
-    - name: 建置（除錯模式）
-      run: |
-        npm run build -- --configuration production --base-href /Angular-practise/ --deploy-url /Angular-practise/
-        ls -la dist/
-        ls -la dist/angular/
-        echo "檢查 index.html 是否存在:"
-        ls -la dist/angular/index.html
-    
-    - name: 創建 404.html
-      run: cp ./dist/angular/index.html ./dist/angular/404.html
-    
-    - name: 設置 GitHub Pages
-      uses: actions/configure-pages@v3
-      
-    - name: 上傳到 GitHub Pages
-      uses: actions/upload-pages-artifact@v2
-      with:
-        path: ./dist/angular
-        
-    - name: 部署到 GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v2
+      - name: 檢出代碼
+        uses: actions/checkout@v4
+
+      - name: 設置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: 安裝依賴
+        run: npm ci
+
+      # 可選：執行 lint 檢查
+      # - name: 執行 Lint
+      #   run: npm run lint
+
+      # 可選：執行測試
+      # - name: 執行測試
+      #   run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadless
+
+      - name: 建置 Angular 應用
+        run: npm run build -- --configuration production --base-href /Angular-practise/ --deploy-url /Angular-practise/
+
+      - name: 創建 404.html（修正 Angular 路由問題）
+        run: cp ./dist/angular/index.html ./dist/angular/404.html
+
+      - name: 設置 GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: 上傳 GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist/angular
+
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
