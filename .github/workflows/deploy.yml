@@ -5,13 +5,11 @@ on:
   push:
     branches: [main, master]
 
-# 給予 GitHub Pages 部署權限
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 確保只有一個部署任務同時執行
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -36,19 +34,29 @@ jobs:
       - name: 安裝依賴
         run: npm ci
 
-      # 可選：執行 lint 檢查
-      # - name: 執行 Lint
-      #   run: npm run lint
-
-      # 可選：執行測試
-      # - name: 執行測試
-      #   run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadless
-
       - name: 建置 Angular 應用
         run: npm run build -- --configuration production --base-href /Angular-practise/
 
-      - name: 創建 404.html（修正 Angular 路由問題）
-        run: cp ./dist/angular/index.html ./dist/angular/404.html
+      - name: 檢查建置結果並創建 404.html
+        run: |
+          echo "=== 檢查 dist 目錄結構 ==="
+          find dist/ -type f -name "*.html" | head -10
+
+          echo "=== 查找 index.html 位置 ==="
+          INDEX_FILE=$(find dist/ -name "index.html" -type f | head -1)
+          echo "找到 index.html: $INDEX_FILE"
+
+          if [ -f "$INDEX_FILE" ]; then
+            DIST_DIR=$(dirname "$INDEX_FILE")
+            cp "$INDEX_FILE" "$DIST_DIR/404.html"
+            echo "404.html 已創建在: $DIST_DIR/404.html"
+            
+            # 設置環境變數供後續步驟使用
+            echo "DIST_PATH=$DIST_DIR" >> $GITHUB_ENV
+          else
+            echo "錯誤: 找不到 index.html"
+            exit 1
+          fi
 
       - name: 設置 GitHub Pages
         uses: actions/configure-pages@v4
@@ -56,7 +64,7 @@ jobs:
       - name: 上傳 GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist/angular
+          path: ${{ env.DIST_PATH }}
 
       - name: 部署到 GitHub Pages
         id: deployment
